@@ -30,18 +30,17 @@ LEECHER_CHECKERS = int(os.environ['LEECHER_CHECKERS']) #how many accounts to che
 '''
 ADMINS = [
     231234498, #you can write a name for each admin after a "#"
-    238537969, #Noel
     ]
 
 '''Settings applicable to the group'''
-ROUND_SCHED = "12 18 21 24" #local hours when to start a new round. No fractions. Separate with space
+ROUND_SCHED = "0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23" #local hours when to start a new round. No fractions. Separate with space
 PERCENTAGE_TO_LEECH = 20    #if a user fails to like this % of names, count as a leech
 LEECHES_TO_BAN = 2          #when a user leeches this many rounds, he is banned
 ALLOW_TALK = 1              #allow off-topic conversations without any nagging (0 for OFF, or 1 for ON)
-STEP1_LEN = 1800            #seconds to spend collecting drops. This starts before the scheduled round time
+STEP1_LEN = 600             #seconds to spend collecting drops. This starts before the scheduled round time
 STEP1_CALLS = 300           #seconds between reminders to drop. Default = 600
-STEP2_LEN = 3600            #seconds users have to do the liking (waiting for "dones"). Default = 3600
-TIMEZONE = +8               #UTC+X of the group's time zone
+STEP2_LEN = 60              #seconds users have to do the liking (waiting for "dones"). Default = 3600
+TIMEZONE = +0               #UTC+X of the group's time zone
 
 '''More general bot settings'''
 IG_VALID_CHARS = set('abcdefghijklmnopqrstuvwxyz1234567890_.') #valid characters for an instagram username
