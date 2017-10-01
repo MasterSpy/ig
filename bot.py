@@ -273,6 +273,7 @@ class Chat():
                 })
         
         #make sure I am logged in and working
+        print('debug 1 - testing instagram connection')
         error = test_insta()
         if error:
             if type(error) == InstagramException and error.args[0].startswith('login_required'):
@@ -290,12 +291,14 @@ class Chat():
             self.start_step4()
             return
         #if there's no error, lets check leechers
+        print('debug 2 - getting all entries from DB')
         entries = db.select('SELECT uid, uname, wname, checked FROM entries WHERE cid=%s AND round_num=%s;',
                             (self.cid, self.curr_round), fetch='all')
         #set of all those who should do the liking
         self.DROPPED = set(entry['wname'] for entry in entries)
         #mark all entries that failed to like anyone
         pool = ThreadPool(config.LEECHER_CHECKERS)
+        print('debug 3 - Checking leechers')
         results = pool.map(self.check_leechers, entries)
         pool.close()
         pool.join()
@@ -458,7 +461,7 @@ class Chat():
             #likers_obj = ig.getMediaLikers(last_pic)
             #likers = likers_obj.likers
             #liker_username = likers[i].username
-            print('[{} Checking]'.format(entry['uname']), end='', flush=True)
+            print(' -', entry['uname'],'Checking')
             igid = ig.getUsernameId(entry['uname'])
             last_pic = ig.getUserFeed(igid).getItems()[0].id
             likers = set(liker.username for liker in ig.getMediaLikers(last_pic).likers)
@@ -483,25 +486,25 @@ class Chat():
                 if config.DEBUG_LEECHER_MESSAGE:
                     self.sendMessage("Leecher error: could not login to instagram".format(entry['uname']))
             elif e.args[0].startswith('User not found') or e.args[0].startswith('Not authorized to view user'):
-                print('[{} Not found or private]'.format(entry['uname']), end='')
+                print(' -', entry['uname'], 'Not found or private')
                 if config.DEBUG_LEECHER_MESSAGE:
                     self.sendMessage("<b>@{}</b> not found or private.".format(entry['uname']))
             else:
                 logging.exception(time.strftime('get_likers @ %Y-%m-%d %H:%M:%S'))
-                print(' -', e, end='')
+                print(' -', entry['uname'], e)
         except IndexError as e:
-            print('[{} {}]'.format(entry['uname'], e), end='')
+            print(' -', entry['uname'], e)
             if config.DEBUG_LEECHER_MESSAGE:
                 self.sendMessage("<b>@{}</b> has no photos".format(entry['uname']))
         except Exception as e:
             logging.exception(time.strftime('get_likers @ %Y-%m-%d %H:%M:%S'))
-            print('[{} {}]'.format(entry['uname'], e))
+            print(' -', entry['uname'], e)
             if config.DEBUG_LEECHER_MESSAGE:
                 self.sendMessage("<b>@{}</b> error:{}".format(entry['uname'], e))
         finally:
             db.execute('UPDATE entries SET checked=1 WHERE cid=%s AND round_num=%s AND uname=%s;',
                             (self.cid, self.curr_round, entry['uname']))
-            print('[{} FINISHED]'.format(entry['uname']), end='')
+            print(' -', entry['uname'], 'FINISHED')
     #commands received in a group
     def cmd(msg):
         cid = msg['chat']['id']
