@@ -201,7 +201,7 @@ class Chat():
     #receive drops
     def start_step1(self):
         '''Send message and set timer for step2'''
-        print(self.cid, 'starting step1')
+        print(self.cid, 'starting step1 - Receive drops')
         now = time.time()
         db.execute('UPDATE chats SET curr_step = 1, step_start = %s, curr_round = curr_round+1 WHERE cid = %s;', (now, self.cid))
         self.curr_step = 1
@@ -234,7 +234,7 @@ class Chat():
     #receive done's
     def start_step2(self):
         '''Compile lists, send message and set timer for step3'''
-        print(self.cid, 'starting step2')
+        print(self.cid, 'starting step2 - Wait for dones and likes')
         now = int(time.time())
         #round info
         args = (self.cid, self.curr_round)
@@ -259,7 +259,7 @@ class Chat():
     #check leechers
     def start_step3(self, silentstart=False):
         '''Check for leechers, then go to step4'''
-        print(self.cid, 'starting step3')
+        print(self.cid, 'starting step3 - Check leechers')
         now = int(time.time())
         db.execute('UPDATE chats SET curr_step = 3, step_start = %s WHERE cid = %s;',
                     (now, self.cid))
@@ -333,7 +333,7 @@ class Chat():
     #wait for next round
     def start_step4(self):
         '''Just set timer for step1'''
-        print(self.cid, 'starting step4')
+        print(self.cid, 'starting step4 - Wait for next round')
         now = int(time.time())
         db.execute('UPDATE chats SET curr_step = 4, step_start = %s WHERE cid = %s;', (now, self.cid))
         self.curr_step = 4
@@ -962,6 +962,10 @@ if config.WEBHOOK_URL:
     app = Flask(__name__)
     webhook = OrderedWebhook(bot, {'chat': on_chat_message,
                                   'callback_query': on_callback_query})
+    
+    @app.route('/', methods=['POST', 'GET'])
+    def root():
+        return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><title>404 Not Found</title><h1>Not Found</h1><p>The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.</p>'
     
     @app.route('/'+config.BOT_TOKEN, methods=['POST'])
     def pass_update():
